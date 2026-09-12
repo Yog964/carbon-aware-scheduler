@@ -487,6 +487,8 @@ th {
 .sim-trace {
     display: flex;
     flex-direction: column;
+    max-height: 100%;
+    overflow: hidden;
 }
 
 .trace-header {
@@ -497,6 +499,7 @@ th {
     margin-bottom: 15px;
     padding-bottom: 10px;
     border-bottom: 1px solid var(--border-color);
+    flex-shrink: 0;
 }
 
 .trace-log {
@@ -507,6 +510,8 @@ th {
     gap: 8px;
     font-family: monospace;
     font-size: 12px;
+    min-height: 0; /* CRITICAL: Prevents flex child from stretching parent */
+    padding-right: 5px;
 }
 
 .trace-item {
