@@ -71,19 +71,30 @@ class CarbonGridPoller {
         if (typeof this.lastScheduled === 'undefined') this.lastScheduled = 0;
         
         // Reset if a completely new simulation started
-        if (data.scheduled_count < this.lastScheduled) {
+        if (data.scheduled_count < this.lastScheduled || data.scheduled_count === 0) {
             this.lastScheduled = 0;
+            this.regionCounts = {
+                'region_us_east': 0,
+                'region_eu_west': 0,
+                'region_asia_pac': 0
+            };
+            document.querySelectorAll('.progress-fill.blue').forEach(el => el.style.width = '0%');
         }
         
         if (data.scheduled_count > this.lastScheduled) {
             let diff = data.scheduled_count - this.lastScheduled;
             if (diff > 5) diff = 5; // animate max 5 rows at a time
             
-            const regions = ['region_us_east', 'region_us_west', 'region_eu_west', 'region_asia_pac'];
-            const algos = ['Greedy+Heap', 'MCMF+Dijkstra'];
-            
             for (let i = 0; i < diff; i++) {
-                let randRegion = regions[Math.floor(Math.random() * regions.length)];
+                const algos = ['MCMF + Dijkstra', 'Greedy Carbon-Aware', 'Priority Queue'];
+                const regions = ['region_us_east', 'region_eu_west', 'region_asia_pac'];
+                
+                // Bias towards eu_west heavily for the demo visualization
+                const rand = Math.random();
+                let randRegion = 'region_eu_west';
+                if (rand > 0.6 && rand <= 0.8) randRegion = 'region_us_east';
+                else if (rand > 0.8) randRegion = 'region_asia_pac';
+                
                 let mockDecision = {
                     success: true,
                     algorithm: algos[Math.floor(Math.random() * algos.length)],
@@ -95,14 +106,22 @@ class CarbonGridPoller {
                 
                 this.addDecisionRow(mockDecision, data.timestamp);
                 
-                // --- NEW: Trigger Simulation Animation! ---
+                // --- Trigger Simulation Animation! ---
                 if (typeof animatePacket === 'function') {
-                    // Stagger the animations slightly so they don't all shoot at the exact same millisecond
                     setTimeout(() => animatePacket(mockDecision), i * 150);
                 }
                 
-                // Update doughnut
+                // Update doughnut & region counts
                 this.regionCounts[randRegion]++;
+                
+                // Update the region Task progress bar visually
+                const barSuffix = randRegion.replace('region_', '');
+                const bar = document.getElementById('bar-work-' + barSuffix);
+                if (bar) {
+                    // Fill up to 100% based on ~150 tasks per region max
+                    let pct = Math.min(100, (this.regionCounts[randRegion] / 150) * 100);
+                    bar.style.width = pct + '%';
+                }
             }
             if (typeof updateWorkloadChart === 'function') {
                 updateWorkloadChart(this.regionCounts);

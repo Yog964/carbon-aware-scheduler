@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CarbonGrid</title>
-    <link rel="stylesheet" href="css/style.css?v=3">
+    <link rel="stylesheet" href="css/style.css?v=4">
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
 </head>
 <body>
@@ -89,6 +89,16 @@
                                     <span>📍 US-East</span>
                                     <span class="carbon-indicator yellow" id="carb-us_east">🟡 320 gCO₂</span>
                                 </div>
+                                <div class="reg-stats">
+                                    <div class="stat-row">
+                                        <span class="stat-label">Carbon</span>
+                                        <div class="progress-bar"><div class="progress-fill yellow" style="width: 64%"></div></div>
+                                    </div>
+                                    <div class="stat-row">
+                                        <span class="stat-label">Tasks</span>
+                                        <div class="progress-bar"><div class="progress-fill blue" id="bar-work-us_east" style="width: 0%"></div></div>
+                                    </div>
+                                </div>
                                 <div class="nodes-grid" id="nodes-us_east"></div>
                             </div>
                             
@@ -97,6 +107,16 @@
                                     <span>📍 Europe</span>
                                     <span class="carbon-indicator green" id="carb-eu_west">🟢 120 gCO₂</span>
                                 </div>
+                                <div class="reg-stats">
+                                    <div class="stat-row">
+                                        <span class="stat-label">Carbon</span>
+                                        <div class="progress-bar"><div class="progress-fill green" style="width: 24%"></div></div>
+                                    </div>
+                                    <div class="stat-row">
+                                        <span class="stat-label">Tasks</span>
+                                        <div class="progress-bar"><div class="progress-fill blue" id="bar-work-eu_west" style="width: 0%"></div></div>
+                                    </div>
+                                </div>
                                 <div class="nodes-grid" id="nodes-eu_west"></div>
                             </div>
                             
@@ -104,6 +124,16 @@
                                 <div class="reg-header">
                                     <span>📍 Asia-East</span>
                                     <span class="carbon-indicator red" id="carb-asia_pac">🔴 480 gCO₂</span>
+                                </div>
+                                <div class="reg-stats">
+                                    <div class="stat-row">
+                                        <span class="stat-label">Carbon</span>
+                                        <div class="progress-bar"><div class="progress-fill red" style="width: 96%"></div></div>
+                                    </div>
+                                    <div class="stat-row">
+                                        <span class="stat-label">Tasks</span>
+                                        <div class="progress-bar"><div class="progress-fill blue" id="bar-work-asia_pac" style="width: 0%"></div></div>
+                                    </div>
                                 </div>
                                 <div class="nodes-grid" id="nodes-asia_pac"></div>
                             </div>

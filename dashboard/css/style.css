@@ -327,11 +327,54 @@ th {
 
 .sim-grid {
     display: grid;
-    grid-template-columns: 2fr 1fr;
+    grid-template-columns: 800px 1fr; /* Fixed width for arena */
     gap: 20px;
-    min-height: 500px;
-    height: calc(100vh - 220px);
+    height: 600px; /* Fixed height */
+    margin-bottom: 20px;
 }
+
+/* Region Stats Bars */
+.reg-stats {
+    margin-bottom: 15px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.stat-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 10px;
+    color: #94a3b8;
+    font-weight: 600;
+}
+
+.stat-label {
+    width: 45px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.progress-bar {
+    flex: 1;
+    height: 6px;
+    background: #0f172a;
+    border-radius: 3px;
+    overflow: hidden;
+    border: 1px solid #334155;
+}
+
+.progress-fill {
+    height: 100%;
+    border-radius: 3px;
+    transition: width 0.3s ease;
+}
+
+.progress-fill.green { background: #34d399; box-shadow: 0 0 5px #34d399; }
+.progress-fill.yellow { background: #fbbf24; box-shadow: 0 0 5px #fbbf24; }
+.progress-fill.red { background: #f87171; box-shadow: 0 0 5px #f87171; }
+.progress-fill.blue { background: #3b82f6; box-shadow: 0 0 5px #3b82f6; }
 
 .sim-arena {
     position: relative;
