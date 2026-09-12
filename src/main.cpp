@@ -23,6 +23,10 @@
 #include "baseline/baseline_scheduler.h"
 #include "server/server.h"
 
+#ifdef WIN32
+#include <windows.h>
+#endif
+
 using namespace carbongrid;
 
 int main(int argc, char* argv[]) {
@@ -87,6 +91,11 @@ int main(int argc, char* argv[]) {
 
     try {
     while (tasks_generated < total_tasks_to_generate || execution_engine.running_count() > 0) {
+        
+#ifdef WIN32
+        Sleep(10); // 10ms visual delay so the dashboard can animate live!
+#endif
+
         double now = sim_clock.now();
 
         // Update execution (check for completed tasks)

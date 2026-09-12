@@ -2,146 +2,118 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>CarbonGrid — Carbon-Aware Cloud Scheduler</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CarbonGrid</title>
     <link rel="stylesheet" href="css/style.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
 </head>
 <body>
-    <!-- Header -->
-    <header>
-        <h1>⚡ CarbonGrid</h1>
-        <p class="subtitle">Carbon-Aware Cloud Resource Scheduling & Optimization</p>
-        <div class="connection-status" id="connectionStatus">● Disconnected</div>
-    </header>
+    <!-- Sidebar -->
+    <aside>
+        <div class="logo">
+            <span class="logo-icon">🍃</span>
+            <span>CarbonGrid</span>
+        </div>
+        <nav>
+            <div class="nav-item active"><span>📊</span> Dashboard</div>
+            <div class="nav-item"><span>📦</span> Workloads</div>
+            <div class="nav-item"><span>🏢</span> Clusters</div>
+            <div class="nav-item"><span>⚙️</span> Scheduling</div>
+            <div class="nav-item"><span>🌍</span> Carbon & Cost</div>
+            <div class="nav-item"><span>📈</span> Analytics</div>
+            <div class="nav-item"><span>🔧</span> Settings</div>
+        </nav>
+        <div class="sidebar-footer">
+            <div class="greener-cloud">
+                <h4>🍃 Greener Cloud</h4>
+                <p>Smarter Scheduling.<br>Lower Emissions.</p>
+            </div>
+        </div>
+    </aside>
 
+    <!-- Main Content -->
     <main>
-        <!-- Row 1: Overview Cards -->
-        <section class="overview-cards">
-            <div class="card">
-                <h3>WORKLOAD</h3>
-                <div class="stat" id="taskRate">0 tasks/s</div>
-                <div class="sub-stat"><span id="pendingCount">0</span> Pending</div>
-                <div class="sub-stat"><span id="runningCount">0</span> Running</div>
-            </div>
-            <div class="card">
-                <h3>CLUSTER</h3>
-                <div class="stat" id="totalNodes">20 Nodes</div>
-                <div class="sub-stat"><span id="totalPods">0</span> Pods</div>
-                <div class="sub-stat"><span id="avgCpu">0%</span> CPU</div>
-            </div>
-            <div class="card">
-                <h3>SCHEDULING</h3>
-                <div class="stat" id="schedulingEvents">0 Events</div>
-                <div class="sub-stat"><span id="scheduledCount">0</span> Scheduled</div>
-                <div class="sub-stat"><span id="avgSchedulingTime">0ms</span> Avg Time</div>
-            </div>
-            <div class="card highlight-green">
-                <h3>CARBON SAVINGS</h3>
-                <div class="stat" id="carbonReduction">0%</div>
-                <div class="sub-stat">vs Baseline</div>
-            </div>
-            <div class="card highlight-blue">
-                <h3>COST SAVINGS</h3>
-                <div class="stat" id="costReduction">0%</div>
-                <div class="sub-stat">vs Baseline</div>
-            </div>
-        </section>
-
-        <!-- Row 2: Charts -->
-        <section class="charts-row">
-            <div class="chart-container">
-                <h3>Carbon Intensity by Region</h3>
-                <canvas id="carbonChart"></canvas>
-            </div>
-            <div class="chart-container">
-                <h3>CPU Utilization by Node</h3>
-                <canvas id="cpuChart"></canvas>
-            </div>
-        </section>
-
-        <section class="charts-row">
-            <div class="chart-container">
-                <h3>Queue Length Over Time</h3>
-                <canvas id="queueChart"></canvas>
-            </div>
-            <div class="chart-container">
-                <h3>Throughput (tasks/sec)</h3>
-                <canvas id="throughputChart"></canvas>
-            </div>
-        </section>
-
-        <!-- Row 3: Node Status Table -->
-        <section class="table-section">
-            <h3>Node Status</h3>
-            <table id="nodeTable">
-                <thead>
-                    <tr><th>Node</th><th>Region</th><th>CPU %</th><th>RAM %</th><th>Carbon (gCO₂/kWh)</th><th>Tasks</th><th>Status</th></tr>
-                </thead>
-                <tbody id="nodeTableBody"></tbody>
-            </table>
-        </section>
-
-        <!-- Row 4: Scheduling Decisions -->
-        <section class="table-section">
-            <h3>Recent Scheduling Decisions</h3>
-            <table id="decisionsTable">
-                <thead>
-                    <tr><th>Task</th><th>Algorithm</th><th>Node</th><th>Region</th><th>Score</th><th>Time</th><th>Status</th></tr>
-                </thead>
-                <tbody id="decisionsTableBody"></tbody>
-            </table>
-        </section>
-
-        <!-- Row 5: Optimization Comparison -->
-        <section class="comparison-section">
-            <h3>Optimization: Baseline vs CarbonGrid</h3>
-            <div class="comparison-grid">
-                <div class="comparison-item">
-                    <span class="label">Carbon Emission</span>
-                    <span class="baseline" id="baselineCarbon">0 gCO₂</span>
-                    <span class="carbongrid" id="carbongridCarbon">0 gCO₂</span>
+        <!-- Header -->
+        <header>
+            <h1>Dashboard</h1>
+            <div class="header-right">
+                <div class="controls">
+                    <button id="btn-start" class="btn btn-start">▶ Start</button>
+                    <button id="btn-stop" class="btn btn-stop" disabled>⏹ Stop</button>
+                    <span id="sim-status" class="status-badge">Stopped</span>
                 </div>
-                <div class="comparison-item">
-                    <span class="label">Cost</span>
-                    <span class="baseline" id="baselineCost">$0</span>
-                    <span class="carbongrid" id="carbongridCost">$0</span>
+                <div class="user-profile">👤 Admin ⌄</div>
+            </div>
+        </header>
+
+        <div class="dashboard-content">
+            <!-- Top Stats -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-card-header"><span>📚</span> Total Workloads</div>
+                    <div class="stat-value" id="val-workloads">0</div>
+                    <div class="stat-trend"><span class="trend-up">↑</span> <span class="trend-text" id="val-tasks-sec">0 tasks/s</span></div>
                 </div>
-                <div class="comparison-item">
-                    <span class="label">Avg Latency</span>
-                    <span class="baseline" id="baselineLatency">0ms</span>
-                    <span class="carbongrid" id="carbongridLatency">0ms</span>
+                <div class="stat-card">
+                    <div class="stat-card-header"><span>▶️</span> Running Pods</div>
+                    <div class="stat-value" id="val-running">0</div>
+                    <div class="stat-trend"><span class="trend-up">↑</span> <span class="trend-text" id="val-avg-cpu">0% Avg CPU</span></div>
                 </div>
-                <div class="comparison-item">
-                    <span class="label">Deadline Misses</span>
-                    <span class="baseline" id="baselineDeadline">0</span>
-                    <span class="carbongrid" id="carbongridDeadline">0</span>
+                <div class="stat-card">
+                    <div class="stat-card-header"><span>🕒</span> Pending Pods</div>
+                    <div class="stat-value" id="val-pending">0</div>
+                    <div class="stat-trend"><span class="trend-down">↓</span> <span class="trend-text">Queue Length</span></div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-card-header"><span>🍃</span> Carbon Savings</div>
+                    <div class="stat-value" id="val-carbon-saved">0%</div>
+                    <div class="stat-trend"><span class="trend-up" id="val-cost-saved">0%</span> <span class="trend-text">Cost Savings</span></div>
                 </div>
             </div>
-        </section>
 
-        <!-- Row 6: Workload Control -->
-        <section class="control-section">
-            <h3>Workload Control</h3>
-            <div class="controls">
-                <button id="btnStart" class="btn btn-green" onclick="sendCommand('start')">▶ START</button>
-                <button id="btnStop" class="btn btn-red" onclick="sendCommand('stop')">■ STOP</button>
-                <div class="rate-control">
-                    <button onclick="changeRate(-10)">−</button>
-                    <span id="currentRate">10</span> tasks/sec
-                    <button onclick="changeRate(10)">+</button>
+            <!-- Charts -->
+            <div class="charts-grid">
+                <div class="card">
+                    <h3>Carbon Emissions Trend <span style="font-size: 12px; font-weight: normal; color: #6b7280;">gCO₂</span></h3>
+                    <div class="chart-wrapper">
+                        <canvas id="emissionsChart"></canvas>
+                    </div>
                 </div>
-                <select id="profileSelect" onchange="sendCommand('profile', this.value)">
-                    <option value="custom">Custom Rate</option>
-                    <option value="gentle">Gentle Ramp (10→50→100)</option>
-                    <option value="moderate">Moderate Ramp (10→100→500)</option>
-                    <option value="stress">Stress Test (10→100→500→1000)</option>
-                </select>
+                <div class="card">
+                    <h3>Workload Distribution</h3>
+                    <div class="chart-wrapper">
+                        <canvas id="workloadChart"></canvas>
+                    </div>
+                </div>
             </div>
-        </section>
+
+            <!-- Table -->
+            <div class="table-container">
+                <div class="table-header">
+                    <h3>Recent Scheduling Events</h3>
+                    <a href="#" style="color: #3b82f6; text-decoration: none; font-size: 13px;">View All →</a>
+                </div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Time</th>
+                            <th>Pod / Job</th>
+                            <th>Algorithm</th>
+                            <th>Region</th>
+                            <th>Node</th>
+                            <th>Carbon Score</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody id="decisionsTableBody">
+                        <!-- Rows populated by JS -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
     </main>
 
-    <script src="js/websocket.js"></script>
     <script src="js/charts.js"></script>
-    <script src="js/app.js"></script>
+    <script src="js/websocket.js"></script>
 </body>
 </html>
