@@ -11,7 +11,6 @@ function initNodes() {
             const node = document.createElement('div');
             node.className = 'node';
             node.id = `node-${reg}-${i}`;
-            node.innerHTML = `🖥`;
             grid.appendChild(node);
         }
     });
