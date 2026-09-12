@@ -276,3 +276,201 @@ th {
 .status-pill.scheduled { background: #d1fae5; color: #065f46; }
 .status-pill.pending { background: #fef3c7; color: #92400e; }
 .status-pill.failed { background: #fee2e2; color: #991b1b; }
+
+/* Simulation Area Specifics */
+.nav-section-title {
+    font-size: 10px;
+    color: #4b5563;
+    font-weight: 700;
+    letter-spacing: 1px;
+    margin: 20px 20px 10px 20px;
+}
+
+.scenario-builder {
+    display: flex;
+    justify-content: space-between;
+    background: var(--card-bg);
+    padding: 15px 25px;
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+    margin-bottom: 20px;
+}
+
+.scenario-inputs {
+    display: flex;
+    gap: 15px;
+    align-items: center;
+}
+
+.scenario-inputs label {
+    font-size: 12px;
+    color: var(--text-muted);
+    font-weight: 500;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.scenario-inputs input, .scenario-inputs select {
+    background: var(--bg-color);
+    border: 1px solid var(--border-color);
+    padding: 6px 10px;
+    border-radius: 4px;
+    font-size: 13px;
+}
+
+.scenario-actions {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.sim-grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 20px;
+    height: 500px;
+}
+
+.sim-arena {
+    position: relative;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    background: #0f172a; /* Dark background for arena */
+    color: white;
+    overflow: hidden;
+}
+
+.arena-title {
+    text-align: center;
+    color: #64748b;
+    font-size: 12px;
+    letter-spacing: 2px;
+    font-weight: 600;
+    margin-bottom: 20px;
+}
+
+.scheduler-node {
+    margin: 0 auto;
+    background: #1e293b;
+    border: 1px solid #334155;
+    padding: 15px 30px;
+    border-radius: 8px;
+    font-weight: 600;
+    z-index: 10;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+}
+
+.regions-container {
+    display: flex;
+    justify-content: space-between;
+    gap: 15px;
+    margin-top: auto;
+}
+
+.region-box {
+    flex: 1;
+    background: #1e293b;
+    border: 1px solid #334155;
+    border-top: 4px solid var(--color-green);
+    border-radius: 8px;
+    padding: 15px;
+    display: flex;
+    flex-direction: column;
+}
+
+.reg-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 13px;
+    font-weight: 600;
+    margin-bottom: 15px;
+}
+
+.carbon-indicator {
+    font-size: 11px;
+    padding: 3px 8px;
+    border-radius: 12px;
+    background: rgba(255,255,255,0.1);
+}
+.carbon-indicator.green { color: #34d399; }
+.carbon-indicator.yellow { color: #fbbf24; }
+.carbon-indicator.red { color: #f87171; }
+
+.nodes-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+}
+
+.node {
+    background: #334155;
+    height: 25px;
+    border-radius: 4px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 10px;
+    color: #cbd5e1;
+    transition: all 0.2s;
+}
+
+.node.active {
+    background: var(--sidebar-active);
+    box-shadow: 0 0 8px var(--sidebar-active);
+}
+
+/* Packet Animation */
+.packet {
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    background: white;
+    border-radius: 4px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 12px;
+    z-index: 20;
+    transition: all 0.5s ease-in-out;
+    box-shadow: 0 0 10px rgba(255,255,255,0.5);
+}
+
+/* Trace Log */
+.sim-trace {
+    display: flex;
+    flex-direction: column;
+}
+
+.trace-header {
+    font-size: 12px;
+    color: var(--text-muted);
+    font-weight: 700;
+    letter-spacing: 1px;
+    margin-bottom: 15px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.trace-log {
+    flex: 1;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    font-family: monospace;
+    font-size: 12px;
+}
+
+.trace-item {
+    padding: 6px 10px;
+    background: #f8fafc;
+    border-left: 3px solid #cbd5e1;
+    border-radius: 0 4px 4px 0;
+}
+.trace-item.success { border-left-color: var(--color-green); }
+.trace-item.info { border-left-color: var(--sidebar-active); }
+.trace-item.eval { color: #64748b; background: transparent; padding-left: 20px; }

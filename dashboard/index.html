@@ -11,21 +11,26 @@
     <!-- Sidebar -->
     <aside>
         <div class="logo">
-            <span class="logo-icon">🍃</span>
+            <span class="logo-icon">🌱</span>
             <span>CarbonGrid</span>
         </div>
         <nav>
-            <div class="nav-item active"><span>📊</span> Dashboard</div>
+            <div class="nav-item" onclick="switchView('dashboard')" id="nav-dashboard"><span>📊</span> Dashboard</div>
+            
+            <div class="nav-section-title">MAIN FEATURE</div>
+            <div class="nav-item active" onclick="switchView('simulation')" id="nav-simulation"><span>🎮</span> Simulation</div>
+            
+            <div class="nav-section-title">COMPONENTS</div>
             <div class="nav-item"><span>📦</span> Workloads</div>
-            <div class="nav-item"><span>🏢</span> Clusters</div>
-            <div class="nav-item"><span>⚙️</span> Scheduling</div>
-            <div class="nav-item"><span>🌍</span> Carbon & Cost</div>
+            <div class="nav-item"><span>🌐</span> Infrastructure</div>
+            <div class="nav-item"><span>🧠</span> Scheduling</div>
+            <div class="nav-item"><span>🌱</span> Carbon & Cost</div>
             <div class="nav-item"><span>📈</span> Analytics</div>
-            <div class="nav-item"><span>🔧</span> Settings</div>
+            <div class="nav-item"><span>⚙️</span> Settings</div>
         </nav>
         <div class="sidebar-footer">
             <div class="greener-cloud">
-                <h4>🍃 Greener Cloud</h4>
+                <h4>🌱 Greener Cloud</h4>
                 <p>Smarter Scheduling.<br>Lower Emissions.</p>
             </div>
         </div>
@@ -33,105 +38,153 @@
 
     <!-- Main Content -->
     <main>
-        <!-- Header -->
-        <header>
-            <h1>Dashboard</h1>
-            <div class="header-right">
-                <div class="controls">
-                    <button id="btn-start" class="btn btn-start">▶ Start</button>
-                    <button id="btn-stop" class="btn btn-stop" disabled>⏹ Stop</button>
-                    
-                    <!-- Settings -->
-                    <div style="display:flex; gap: 15px; border-left: 1px solid var(--border-color); padding-left: 15px; align-items:center;">
-                        <label style="color:var(--text-muted); font-size:12px; font-weight:500;">Tasks:
-                            <input type="number" id="input-tasks" value="500" style="width:70px; background:var(--bg-color); color:var(--text-main); border:1px solid var(--border-color); padding:5px 8px; border-radius:4px; font-size:13px; margin-left:5px;">
+        <!-- View: SIMULATION (HERO) -->
+        <div id="view-simulation" class="view-section active">
+            <header>
+                <h1>Simulation Arena</h1>
+                <div class="header-right">
+                    <div class="user-profile">👤 Admin ⌄</div>
+                </div>
+            </header>
+            
+            <div class="dashboard-content">
+                <!-- Scenario Builder -->
+                <div class="scenario-builder">
+                    <div class="scenario-inputs">
+                        <label>Tasks: <input type="number" id="sim-tasks" value="500"></label>
+                        <label>Tasks/sec: <input type="number" id="sim-rate" value="50"></label>
+                        <label>Algorithm: 
+                            <select id="sim-algo">
+                                <option>MCMF + Dijkstra</option>
+                                <option>Greedy Carbon-Aware</option>
+                            </select>
                         </label>
-                        <label style="color:var(--text-muted); font-size:12px; font-weight:500;">Tasks/sec:
-                            <input type="number" id="input-rate" value="50" style="width:70px; background:var(--bg-color); color:var(--text-main); border:1px solid var(--border-color); padding:5px 8px; border-radius:4px; font-size:13px; margin-left:5px;">
-                        </label>
-                        <label style="color:var(--text-muted); font-size:12px; font-weight:500;">UI Speed:
-                            <select id="input-speed" style="background:var(--bg-color); color:var(--text-main); border:1px solid var(--border-color); padding:5px 8px; border-radius:4px; font-size:13px; margin-left:5px;">
-                                <option value="1">Fast</option>
-                                <option value="10" selected>Normal</option>
+                        <label>Speed: 
+                            <select id="sim-speed">
                                 <option value="50">Slow</option>
+                                <option value="20" selected>Normal</option>
+                                <option value="1">Fast</option>
                             </select>
                         </label>
                     </div>
-
-                    <span id="sim-status" class="status-badge" style="margin-left: 15px;">Stopped</span>
-                </div>
-                <div class="user-profile">👤 Admin ⌄</div>
-            </div>
-        </header>
-
-        <div class="dashboard-content">
-            <!-- Top Stats -->
-            <div class="stats-grid">
-                <div class="stat-card">
-                    <div class="stat-card-header"><span>📚</span> Total Workloads</div>
-                    <div class="stat-value" id="val-workloads">0</div>
-                    <div class="stat-trend"><span class="trend-up">↑</span> <span class="trend-text" id="val-tasks-sec">0 tasks/s</span></div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-card-header"><span>▶️</span> Running Pods</div>
-                    <div class="stat-value" id="val-running">0</div>
-                    <div class="stat-trend"><span class="trend-up">↑</span> <span class="trend-text" id="val-avg-cpu">0% Avg CPU</span></div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-card-header"><span>🕒</span> Pending Pods</div>
-                    <div class="stat-value" id="val-pending">0</div>
-                    <div class="stat-trend"><span class="trend-down">↓</span> <span class="trend-text">Queue Length</span></div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-card-header"><span>🍃</span> Carbon Savings</div>
-                    <div class="stat-value" id="val-carbon-saved">0%</div>
-                    <div class="stat-trend"><span class="trend-up" id="val-cost-saved">0%</span> <span class="trend-text">Cost Savings</span></div>
-                </div>
-            </div>
-
-            <!-- Charts -->
-            <div class="charts-grid">
-                <div class="card">
-                    <h3>Carbon Emissions Trend <span style="font-size: 12px; font-weight: normal; color: #6b7280;">gCO₂</span></h3>
-                    <div class="chart-wrapper">
-                        <canvas id="emissionsChart"></canvas>
+                    <div class="scenario-actions">
+                        <button id="btn-start" class="btn btn-start">▶ START SIMULATION</button>
+                        <button id="btn-stop" class="btn btn-stop" disabled>⏹ STOP</button>
                     </div>
                 </div>
-                <div class="card">
-                    <h3>Workload Distribution</h3>
-                    <div class="chart-wrapper">
-                        <canvas id="workloadChart"></canvas>
+
+                <!-- Simulation Main Area -->
+                <div class="sim-grid">
+                    <!-- Arena -->
+                    <div class="sim-arena card">
+                        <div class="arena-title">CLOUD SIMULATION TOPOLOGY</div>
+                        
+                        <div class="scheduler-node" id="scheduler-node">
+                            🧠 CarbonGrid Scheduler
+                        </div>
+                        
+                        <div class="regions-container">
+                            <div class="region-box" id="reg-us_east">
+                                <div class="reg-header">
+                                    <span>🇺🇸 US-East</span>
+                                    <span class="carbon-indicator yellow" id="carb-us_east">🟡 320 gCO₂</span>
+                                </div>
+                                <div class="nodes-grid" id="nodes-us_east"></div>
+                            </div>
+                            
+                            <div class="region-box" id="reg-eu_west">
+                                <div class="reg-header">
+                                    <span>🇪🇺 Europe</span>
+                                    <span class="carbon-indicator green" id="carb-eu_west">🟢 120 gCO₂</span>
+                                </div>
+                                <div class="nodes-grid" id="nodes-eu_west"></div>
+                            </div>
+                            
+                            <div class="region-box" id="reg-asia_pac">
+                                <div class="reg-header">
+                                    <span>🌏 Asia-East</span>
+                                    <span class="carbon-indicator red" id="carb-asia_pac">🔴 480 gCO₂</span>
+                                </div>
+                                <div class="nodes-grid" id="nodes-asia_pac"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Algorithm Trace -->
+                    <div class="sim-trace card">
+                        <div class="trace-header">ALGORITHM TRACE</div>
+                        <div class="trace-log" id="trace-log">
+                            <div class="trace-item text-muted">Waiting for simulation to start...</div>
+                        </div>
                     </div>
                 </div>
             </div>
+        </div>
 
-            <!-- Table -->
-            <div class="table-container">
-                <div class="table-header">
-                    <h3>Recent Scheduling Events</h3>
-                    <a href="#" style="color: #3b82f6; text-decoration: none; font-size: 13px;">View All →</a>
+        <!-- View: DASHBOARD (ANALYTICS) -->
+        <div id="view-dashboard" class="view-section" style="display: none;">
+            <header>
+                <h1>Dashboard Analytics</h1>
+                <div class="header-right">
+                    <span id="sim-status" class="status-badge">Stopped</span>
                 </div>
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Time</th>
-                            <th>Pod / Job</th>
-                            <th>Algorithm</th>
-                            <th>Region</th>
-                            <th>Node</th>
-                            <th>Carbon Score</th>
-                            <th>Status</th>
-                        </tr>
-                    </thead>
-                    <tbody id="decisionsTableBody">
-                        <!-- Rows populated by JS -->
-                    </tbody>
-                </table>
+            </header>
+
+            <div class="dashboard-content">
+                <!-- Top Stats -->
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-card-header"><span>📚</span> Total Workloads</div>
+                        <div class="stat-value" id="val-workloads">0</div>
+                        <div class="stat-trend"><span class="trend-up">↑</span> <span class="trend-text" id="val-tasks-sec">0 tasks/s</span></div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-card-header"><span>▶️</span> Running Pods</div>
+                        <div class="stat-value" id="val-running">0</div>
+                        <div class="stat-trend"><span class="trend-up">↑</span> <span class="trend-text" id="val-avg-cpu">0% Avg CPU</span></div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-card-header"><span>🕒</span> Pending Pods</div>
+                        <div class="stat-value" id="val-pending">0</div>
+                        <div class="stat-trend"><span class="trend-down">↓</span> <span class="trend-text">Queue Length</span></div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-card-header"><span>🌱</span> Carbon Savings</div>
+                        <div class="stat-value" id="val-carbon-saved">0%</div>
+                        <div class="stat-trend"><span class="trend-up" id="val-cost-saved">0%</span> <span class="trend-text">Cost Savings</span></div>
+                    </div>
+                </div>
+
+                <!-- Charts -->
+                <div class="charts-grid">
+                    <div class="card">
+                        <h3>Carbon Emissions Trend <span style="font-size: 12px; font-weight: normal; color: #6b7280;">gCO₂</span></h3>
+                        <div class="chart-wrapper">
+                            <canvas id="emissionsChart"></canvas>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <h3>Workload Distribution</h3>
+                        <div class="chart-wrapper">
+                            <canvas id="workloadChart"></canvas>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </main>
 
+    <script>
+        function switchView(viewName) {
+            document.querySelectorAll('.view-section').forEach(el => el.style.display = 'none');
+            document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+            
+            document.getElementById('view-' + viewName).style.display = 'block';
+            document.getElementById('nav-' + viewName).classList.add('active');
+        }
+    </script>
     <script src="js/charts.js"></script>
+    <script src="js/simulation.js"></script>
     <script src="js/websocket.js"></script>
 </body>
 </html>

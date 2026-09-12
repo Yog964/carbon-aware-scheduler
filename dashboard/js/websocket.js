@@ -90,6 +90,12 @@ class CarbonGridPoller {
                 
                 this.addDecisionRow(mockDecision, data.timestamp);
                 
+                // --- NEW: Trigger Simulation Animation! ---
+                if (typeof animatePacket === 'function') {
+                    // Stagger the animations slightly so they don't all shoot at the exact same millisecond
+                    setTimeout(() => animatePacket(mockDecision), i * 150);
+                }
+                
                 // Update doughnut
                 this.regionCounts[randRegion]++;
             }
