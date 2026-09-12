@@ -329,7 +329,8 @@ th {
     display: grid;
     grid-template-columns: 2fr 1fr;
     gap: 20px;
-    height: 500px;
+    min-height: 500px;
+    height: calc(100vh - 220px);
 }
 
 .sim-arena {

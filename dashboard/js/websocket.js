@@ -70,6 +70,11 @@ class CarbonGridPoller {
         // the table and doughnut chart based on the scheduled_count increasing.
         if (typeof this.lastScheduled === 'undefined') this.lastScheduled = 0;
         
+        // Reset if a completely new simulation started
+        if (data.scheduled_count < this.lastScheduled) {
+            this.lastScheduled = 0;
+        }
+        
         if (data.scheduled_count > this.lastScheduled) {
             let diff = data.scheduled_count - this.lastScheduled;
             if (diff > 5) diff = 5; // animate max 5 rows at a time
@@ -153,6 +158,13 @@ function sendCommand(cmd) {
         const rate = parseInt(document.getElementById('input-rate')?.value) || 50;
         const delay = parseInt(document.getElementById('input-speed')?.value) || 10;
         
+        // Clear UI for fresh start
+        const traceLog = document.getElementById('trace-log');
+        if (traceLog) traceLog.innerHTML = '<div class="trace-item text-muted">Simulation starting...</div>';
+        
+        const tbody = document.getElementById('decisionsTableBody');
+        if (tbody) tbody.innerHTML = '';
+
         fetch('/api/start', { 
             method: 'POST',
             headers: {'Content-Type': 'application/json'},
