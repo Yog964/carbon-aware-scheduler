@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>CarbonGrid — Carbon-Aware Cloud Scheduler</title>
+    <link rel="stylesheet" href="css/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <h1>⚡ CarbonGrid</h1>
+        <p class="subtitle">Carbon-Aware Cloud Resource Scheduling & Optimization</p>
+        <div class="connection-status" id="connectionStatus">● Disconnected</div>
+    </header>
+
+    <main>
+        <!-- Row 1: Overview Cards -->
+        <section class="overview-cards">
+            <div class="card">
+                <h3>WORKLOAD</h3>
+                <div class="stat" id="taskRate">0 tasks/s</div>
+                <div class="sub-stat"><span id="pendingCount">0</span> Pending</div>
+                <div class="sub-stat"><span id="runningCount">0</span> Running</div>
+            </div>
+            <div class="card">
+                <h3>CLUSTER</h3>
+                <div class="stat" id="totalNodes">20 Nodes</div>
+                <div class="sub-stat"><span id="totalPods">0</span> Pods</div>
+                <div class="sub-stat"><span id="avgCpu">0%</span> CPU</div>
+            </div>
+            <div class="card">
+                <h3>SCHEDULING</h3>
+                <div class="stat" id="schedulingEvents">0 Events</div>
+                <div class="sub-stat"><span id="scheduledCount">0</span> Scheduled</div>
+                <div class="sub-stat"><span id="avgSchedulingTime">0ms</span> Avg Time</div>
+            </div>
+            <div class="card highlight-green">
+                <h3>CARBON SAVINGS</h3>
+                <div class="stat" id="carbonReduction">0%</div>
+                <div class="sub-stat">vs Baseline</div>
+            </div>
+            <div class="card highlight-blue">
+                <h3>COST SAVINGS</h3>
+                <div class="stat" id="costReduction">0%</div>
+                <div class="sub-stat">vs Baseline</div>
+            </div>
+        </section>
+
+        <!-- Row 2: Charts -->
+        <section class="charts-row">
+            <div class="chart-container">
+                <h3>Carbon Intensity by Region</h3>
+                <canvas id="carbonChart"></canvas>
+            </div>
+            <div class="chart-container">
+                <h3>CPU Utilization by Node</h3>
+                <canvas id="cpuChart"></canvas>
+            </div>
+        </section>
+
+        <section class="charts-row">
+            <div class="chart-container">
+                <h3>Queue Length Over Time</h3>
+                <canvas id="queueChart"></canvas>
+            </div>
+            <div class="chart-container">
+                <h3>Throughput (tasks/sec)</h3>
+                <canvas id="throughputChart"></canvas>
+            </div>
+        </section>
+
+        <!-- Row 3: Node Status Table -->
+        <section class="table-section">
+            <h3>Node Status</h3>
+            <table id="nodeTable">
+                <thead>
+                    <tr><th>Node</th><th>Region</th><th>CPU %</th><th>RAM %</th><th>Carbon (gCO₂/kWh)</th><th>Tasks</th><th>Status</th></tr>
+                </thead>
+                <tbody id="nodeTableBody"></tbody>
+            </table>
+        </section>
+
+        <!-- Row 4: Scheduling Decisions -->
+        <section class="table-section">
+            <h3>Recent Scheduling Decisions</h3>
+            <table id="decisionsTable">
+                <thead>
+                    <tr><th>Task</th><th>Algorithm</th><th>Node</th><th>Region</th><th>Score</th><th>Time</th><th>Status</th></tr>
+                </thead>
+                <tbody id="decisionsTableBody"></tbody>
+            </table>
+        </section>
+
+        <!-- Row 5: Optimization Comparison -->
+        <section class="comparison-section">
+            <h3>Optimization: Baseline vs CarbonGrid</h3>
+            <div class="comparison-grid">
+                <div class="comparison-item">
+                    <span class="label">Carbon Emission</span>
+                    <span class="baseline" id="baselineCarbon">0 gCO₂</span>
+                    <span class="carbongrid" id="carbongridCarbon">0 gCO₂</span>
+                </div>
+                <div class="comparison-item">
+                    <span class="label">Cost</span>
+                    <span class="baseline" id="baselineCost">$0</span>
+                    <span class="carbongrid" id="carbongridCost">$0</span>
+                </div>
+                <div class="comparison-item">
+                    <span class="label">Avg Latency</span>
+                    <span class="baseline" id="baselineLatency">0ms</span>
+                    <span class="carbongrid" id="carbongridLatency">0ms</span>
+                </div>
+                <div class="comparison-item">
+                    <span class="label">Deadline Misses</span>
+                    <span class="baseline" id="baselineDeadline">0</span>
+                    <span class="carbongrid" id="carbongridDeadline">0</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- Row 6: Workload Control -->
+        <section class="control-section">
+            <h3>Workload Control</h3>
+            <div class="controls">
+                <button id="btnStart" class="btn btn-green" onclick="sendCommand('start')">▶ START</button>
+                <button id="btnStop" class="btn btn-red" onclick="sendCommand('stop')">■ STOP</button>
+                <div class="rate-control">
+                    <button onclick="changeRate(-10)">−</button>
+                    <span id="currentRate">10</span> tasks/sec
+                    <button onclick="changeRate(10)">+</button>
+                </div>
+                <select id="profileSelect" onchange="sendCommand('profile', this.value)">
+                    <option value="custom">Custom Rate</option>
+                    <option value="gentle">Gentle Ramp (10→50→100)</option>
+                    <option value="moderate">Moderate Ramp (10→100→500)</option>
+                    <option value="stress">Stress Test (10→100→500→1000)</option>
+                </select>
+            </div>
+        </section>
+    </main>
+
+    <script src="js/websocket.js"></script>
+    <script src="js/charts.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>
