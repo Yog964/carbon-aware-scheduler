@@ -80,7 +80,15 @@ int main(int argc, char* argv[]) {
     double next_task_time = 0.0;
     double metrics_interval = 5.0;  // snapshot every 5 sim seconds
     double last_metrics_time = 0.0;
+    // Command line arguments for dynamic dashboard control
     int total_tasks_to_generate = 500;
+    double custom_rate = 0.0; // 0 means use default dynamic load controller
+    int delay_ms = 10;
+
+    if (argc > 1) total_tasks_to_generate = std::stoi(argv[1]);
+    if (argc > 2) custom_rate = std::stod(argv[2]);
+    if (argc > 3) delay_ms = std::stoi(argv[3]);
+
     int tasks_generated = 0;
 
     // Store tasks on heap since ExecutionEngine stores Task* pointers
@@ -93,7 +101,9 @@ int main(int argc, char* argv[]) {
     while (tasks_generated < total_tasks_to_generate || execution_engine.running_count() > 0) {
         
 #ifdef WIN32
-        Sleep(10); // 10ms visual delay so the dashboard can animate live!
+        if (delay_ms > 0) {
+            Sleep(delay_ms); // Visual delay so the dashboard can animate live!
+        }
 #endif
 
         double now = sim_clock.now();
@@ -103,7 +113,7 @@ int main(int argc, char* argv[]) {
 
         // Generate new tasks
         if (tasks_generated < total_tasks_to_generate && now >= next_task_time) {
-            double rate = load_ctrl.get_rate_at(now);
+            double rate = (custom_rate > 0.0) ? custom_rate : load_ctrl.get_rate_at(now);
             workload_gen.set_arrival_rate(rate);
 
             Task* task = new Task(workload_gen.generate_task(now));

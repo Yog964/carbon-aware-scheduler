@@ -40,7 +40,25 @@
                 <div class="controls">
                     <button id="btn-start" class="btn btn-start">▶ Start</button>
                     <button id="btn-stop" class="btn btn-stop" disabled>⏹ Stop</button>
-                    <span id="sim-status" class="status-badge">Stopped</span>
+                    
+                    <!-- Settings -->
+                    <div style="display:flex; gap: 15px; border-left: 1px solid var(--border-color); padding-left: 15px; align-items:center;">
+                        <label style="color:var(--text-muted); font-size:12px; font-weight:500;">Tasks:
+                            <input type="number" id="input-tasks" value="500" style="width:70px; background:var(--bg-color); color:var(--text-main); border:1px solid var(--border-color); padding:5px 8px; border-radius:4px; font-size:13px; margin-left:5px;">
+                        </label>
+                        <label style="color:var(--text-muted); font-size:12px; font-weight:500;">Tasks/sec:
+                            <input type="number" id="input-rate" value="50" style="width:70px; background:var(--bg-color); color:var(--text-main); border:1px solid var(--border-color); padding:5px 8px; border-radius:4px; font-size:13px; margin-left:5px;">
+                        </label>
+                        <label style="color:var(--text-muted); font-size:12px; font-weight:500;">UI Speed:
+                            <select id="input-speed" style="background:var(--bg-color); color:var(--text-main); border:1px solid var(--border-color); padding:5px 8px; border-radius:4px; font-size:13px; margin-left:5px;">
+                                <option value="1">Fast</option>
+                                <option value="10" selected>Normal</option>
+                                <option value="50">Slow</option>
+                            </select>
+                        </label>
+                    </div>
+
+                    <span id="sim-status" class="status-badge" style="margin-left: 15px;">Stopped</span>
                 </div>
                 <div class="user-profile">👤 Admin ⌄</div>
             </div>

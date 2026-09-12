@@ -143,7 +143,15 @@ function sendCommand(cmd) {
     }
 
     if (cmd === 'start') {
-        fetch('/api/start', { method: 'POST' }).catch(e => alert("Failed to start server. Is python dashboard/server.py running?"));
+        const total = parseInt(document.getElementById('input-tasks')?.value) || 500;
+        const rate = parseInt(document.getElementById('input-rate')?.value) || 50;
+        const delay = parseInt(document.getElementById('input-speed')?.value) || 10;
+        
+        fetch('/api/start', { 
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({ total_tasks: total, rate: rate, delay: delay })
+        }).catch(e => alert("Failed to start server. Is python dashboard/server.py running?"));
     } else if (cmd === 'stop') {
         fetch('/api/stop', { method: 'POST' }).catch(e => alert("Failed to stop server."));
     }

@@ -19,11 +19,23 @@ class SimulationHandler(http.server.SimpleHTTPRequestHandler):
         global sim_process
         if self.path == '/api/start':
             if sim_process is None or sim_process.poll() is not None:
+                content_length = int(self.headers.get('Content-Length', 0))
+                params = []
+                if content_length > 0:
+                    try:
+                        body = json.loads(self.rfile.read(content_length))
+                        total = str(body.get('total_tasks', 500))
+                        rate = str(body.get('rate', 0.0))
+                        delay = str(body.get('delay', 10))
+                        params = [total, rate, delay]
+                    except:
+                        pass
+                
                 exe_path = os.path.join(PROJECT_ROOT, "build", "CarbonGrid.exe")
                 if os.path.exists(exe_path):
-                    # Start the C++ simulation in the background
-                    sim_process = subprocess.Popen([exe_path], cwd=PROJECT_ROOT)
-                    self.send_json_response({"status": "started"})
+                    # Start the C++ simulation with arguments
+                    sim_process = subprocess.Popen([exe_path] + params, cwd=PROJECT_ROOT)
+                    self.send_json_response({"status": "started", "args": params})
                 else:
                     self.send_json_response({"error": "Executable not found. Build first."}, 404)
             else:
