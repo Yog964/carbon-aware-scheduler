@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CarbonGrid</title>
-    <link rel="stylesheet" href="css/style.css?v=5">
+    <link rel="stylesheet" href="css/style.css?v=9">
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
 </head>
 <body>
@@ -21,9 +21,9 @@
             <div class="nav-item active" onclick="switchView('simulation')" id="nav-simulation"><span>🎮</span> Simulation</div>
             
             <div class="nav-section-title">COMPONENTS</div>
-            <div class="nav-item"><span>📦</span> Workloads</div>
+            <div class="nav-item" onclick="switchView('workloads')" id="nav-workloads"><span>📦</span> Workloads</div>
             <div class="nav-item"><span>🌐</span> Infrastructure</div>
-            <div class="nav-item"><span>🧠</span> Scheduling</div>
+            <div class="nav-item" onclick="switchView('scheduling')" id="nav-scheduling"><span>🧠</span> Scheduling</div>
             <div class="nav-item"><span>🌱</span> Carbon & Cost</div>
             <div class="nav-item"><span>📈</span> Analytics</div>
             <div class="nav-item"><span>⚙️</span> Settings</div>
@@ -38,6 +38,112 @@
 
     <!-- Main Content -->
     <main>
+        <!-- View: SCHEDULING (DAA CORE) -->
+        <div id="view-scheduling" class="view-section" style="display: none;">
+            <header>
+                <h1>Scheduling Engine</h1>
+                <div class="header-right">
+                    <span class="status-badge" style="background: rgba(129,140,248,0.15); color: #818cf8; border: 1px solid rgba(129,140,248,0.3);">DAA Core Component</span>
+                    <div class="user-profile">👤 Admin ⌄</div>
+                </div>
+            </header>
+            
+            <div class="dashboard-content">
+                <div class="sim-grid">
+                    <!-- Left: Algorithm Selector -->
+                    <div class="card" style="background: #0f172a; border-top: 4px solid #818cf8;">
+                        <h3 style="color: #cbd5e1; margin-bottom: 25px; font-size: 13px; letter-spacing: 1px; text-transform: uppercase;">Algorithm Selection</h3>
+                        
+                        <div class="algo-list">
+                            <label class="algo-item active" onclick="document.querySelectorAll('.algo-item').forEach(e=>e.classList.remove('active')); this.classList.add('active');">
+                                <input type="radio" name="algo" checked>
+                                <div class="algo-details">
+                                    <h4>Greedy Carbon-Aware</h4>
+                                    <p><strong style="color:#818cf8;">O(N log K)</strong> - Quickly evaluates nodes based on a composite carbon-cost heuristic function.</p>
+                                </div>
+                            </label>
+                            
+                            <label class="algo-item" onclick="document.querySelectorAll('.algo-item').forEach(e=>e.classList.remove('active')); this.classList.add('active');">
+                                <input type="radio" name="algo">
+                                <div class="algo-details">
+                                    <h4>MCMF + Dijkstra (Network Flow)</h4>
+                                    <p><strong style="color:#818cf8;">O(V²E)</strong> - Batches deferred non-urgent tasks and routes them via Min-Cost Max-Flow graphs.</p>
+                                </div>
+                            </label>
+
+                            <label class="algo-item" onclick="document.querySelectorAll('.algo-item').forEach(e=>e.classList.remove('active')); this.classList.add('active');">
+                                <input type="radio" name="algo">
+                                <div class="algo-details">
+                                    <h4>Priority Queue (Min-Heap)</h4>
+                                    <p><strong style="color:#818cf8;">O(log N)</strong> - Maintains real-time strict deadline ordering for urgent incoming workloads.</p>
+                                </div>
+                            </label>
+
+                            <label class="algo-item disabled">
+                                <input type="radio" name="algo" disabled>
+                                <div class="algo-details">
+                                    <h4>Dynamic Programming (Knapsack)</h4>
+                                    <p><strong style="color:#818cf8;">O(N * W)</strong> - Strict capacity bin-packing constraint solver (Experimental / Disabled).</p>
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Right: DAA Strategy Flowchart -->
+                    <div class="card" style="background: #0f172a; display: flex; flex-direction: column;">
+                        <h3 style="color: #cbd5e1; margin-bottom: 20px; font-size: 13px; letter-spacing: 1px; text-transform: uppercase;">Current Strategy Pipeline</h3>
+                        
+                        <div class="flowchart">
+                            <div class="flow-node">1. Task Priority Queue <span>(Min-Heap sorted by Slack Time)</span></div>
+                            <div class="flow-arrow">↓</div>
+                            <div class="flow-node">2. Resource Filtering <span>(Prune nodes lacking CPU/RAM)</span></div>
+                            <div class="flow-arrow">↓</div>
+                            <div class="flow-node">3. Carbon Score Calculation <span>(Grid Intensity × PUE)</span></div>
+                            <div class="flow-arrow">↓</div>
+                            <div class="flow-node">4. Cost Score Evaluation <span>(Renewable Energy Discount Factor)</span></div>
+                            <div class="flow-arrow">↓</div>
+                            <div class="flow-node">5. Deadline Feasibility Check <span>(Latency < Slack)</span></div>
+                            <div class="flow-arrow">↓</div>
+                            <div class="flow-node">6. Node Selection <span>(Argmin of composite equation)</span></div>
+                            <div class="flow-arrow">↓</div>
+                            <div class="flow-node success">7. Task Allocation & Dispatch</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- View: WORKLOADS -->
+        <div id="view-workloads" class="view-section" style="display: none;">
+            <header>
+                <h1>Workloads</h1>
+                <div class="header-right">
+                    <button class="btn btn-start" style="font-size:12px; padding:6px 12px;" onclick="generateMockWorkloads()">↻ Refresh Workloads</button>
+                    <div class="user-profile">👤 Admin ⌄</div>
+                </div>
+            </header>
+            <div class="dashboard-content">
+                <div class="card table-container" style="padding:0; border:1px solid #334155; overflow:hidden;">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Task ID</th>
+                                <th>CPU</th>
+                                <th>RAM</th>
+                                <th>Priority</th>
+                                <th>Slack / Deadline</th>
+                                <th>Status</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="workloads-tbody">
+                            <!-- Populated by JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
         <!-- View: SIMULATION (HERO) -->
         <div id="view-simulation" class="view-section active">
             <header>
@@ -140,11 +246,23 @@
                         </div>
                     </div>
 
-                    <!-- Algorithm Trace -->
-                    <div class="sim-trace card">
-                        <div class="trace-header">ALGORITHM TRACE</div>
-                        <div class="trace-log" id="trace-log">
-                            <div class="trace-item text-muted">Waiting for simulation to start...</div>
+                    <!-- Info Panel (Right) -->
+                    <div class="sim-right-panel" style="display:flex; flex-direction:column; gap:15px; height:100%; overflow:hidden;">
+                        
+                        <!-- Current Workload Card -->
+                        <div class="card current-task-card" style="background:#0f172a; padding:15px; border-top:3px solid #f59e0b; flex-shrink:0;">
+                            <h4 style="font-size:11px; color:#94a3b8; margin:0 0 10px 0; text-transform:uppercase; letter-spacing:1px;">Current Workload</h4>
+                            <div id="active-task-details" style="font-family:monospace; font-size:12px; color:#cbd5e1; line-height:1.6;">
+                                <span style="color:#64748b;">Waiting for scheduler...</span>
+                            </div>
+                        </div>
+
+                        <!-- Trace Log -->
+                        <div class="card sim-trace" id="trace-log-container" style="flex:1;">
+                            <div class="trace-header">ALGORITHM TRACE</div>
+                            <div class="trace-log" id="trace-log">
+                                <div class="trace-item info" style="font-style: italic;">Waiting for simulation to start...</div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -216,5 +334,6 @@
     <script src="js/charts.js"></script>
     <script src="js/simulation.js"></script>
     <script src="js/websocket.js"></script>
+    <script src="js/workloads.js"></script>
 </body>
 </html>

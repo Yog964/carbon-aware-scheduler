@@ -87,23 +87,67 @@ class CarbonGridPoller {
             
             for (let i = 0; i < diff; i++) {
                 const algos = ['MCMF + Dijkstra', 'Greedy Carbon-Aware', 'Priority Queue'];
-                const regions = ['region_us_east', 'region_eu_west', 'region_asia_pac'];
                 
-                // Bias towards eu_west heavily for the demo visualization
-                const rand = Math.random();
-                let randRegion = 'region_eu_west';
-                if (rand > 0.6 && rand <= 0.8) randRegion = 'region_us_east';
-                else if (rand > 0.8) randRegion = 'region_asia_pac';
+                // 1. Sort regions by current carbon intensity
+                let regionsList = ['eu_west', 'us_east', 'asia_pac'];
+                if (window.regionCarbon) {
+                    regionsList.sort((a, b) => window.regionCarbon[a] - window.regionCarbon[b]);
+                }
+                
+                let selectedRegion = null;
+                let selectedNode = null;
+                
+                // 2. Find the lowest carbon region that has an AVAILABLE node (CPU < 85%)
+                for (let reg of regionsList) {
+                    let freeNodes = [];
+                    for (let n = 1; n <= 4; n++) {
+                        let nId = `node_${reg}_${n}`;
+                        let stats = window.nodeStats ? window.nodeStats[nId] : null;
+                        // Assuming nodes are free if stats undefined or CPU < 85%
+                        if (!stats || (stats.cpu < 85 && stats.ram < 85)) {
+                            freeNodes.push(nId);
+                        }
+                    }
+                    
+                    if (freeNodes.length > 0) {
+                        selectedRegion = 'region_' + reg;
+                        // Pick a random free node in this region
+                        selectedNode = freeNodes[Math.floor(Math.random() * freeNodes.length)];
+                        break; 
+                    }
+                }
+                
+                // 3. Fallback if entire grid is overloaded (force it somewhere)
+                if (!selectedNode) {
+                    selectedRegion = 'region_asia_pac';
+                    selectedNode = 'node_asia_pac_1';
+                }
                 
                 let mockDecision = {
                     success: true,
                     algorithm: algos[Math.floor(Math.random() * algos.length)],
                     task_id: "task_" + (this.lastScheduled + i + 1),
-                    region: randRegion,
-                    node_id: randRegion.replace('region_', 'node_') + "_" + (Math.floor(Math.random() * 5) + 1),
-                    score: Math.random() * 0.4 + 0.1
+                    region: selectedRegion,
+                    node_id: selectedNode,
+                    score: Math.random() * 0.4 + 0.1,
+                    priority: ['HIGH', 'MEDIUM', 'LOW'][Math.floor(Math.random()*3)]
                 };
                 
+                // Update Current Task UI
+                const taskUI = document.getElementById('active-task-details');
+                if (taskUI) {
+                    taskUI.innerHTML = `
+                        <div style="display:flex; justify-content:space-between; margin-bottom:4px;">
+                            <span style="color:white; font-weight:bold;">📦 ${mockDecision.task_id}</span>
+                            <span class="badge ${mockDecision.priority === 'HIGH' ? 'badge-high' : 'badge-med'}">${mockDecision.priority}</span>
+                        </div>
+                        <div>CPU: ${Math.floor(Math.random()*8)+2} Cores | RAM: ${Math.floor(Math.random()*16)+4} GB</div>
+                        <hr style="border:0; border-top:1px dashed #334155; margin:8px 0;">
+                        <div style="color:#34d399; font-weight:bold;">↳ Routed to ${mockDecision.region.replace('region_','').toUpperCase()}</div>
+                        <div style="color:#94a3b8; font-size:10px;">Node: ${mockDecision.node_id} | Score: ${mockDecision.score.toFixed(2)} ⭐</div>
+                    `;
+                }
+
                 this.addDecisionRow(mockDecision, data.timestamp);
                 
                 // --- Trigger Simulation Animation! ---
@@ -112,14 +156,14 @@ class CarbonGridPoller {
                 }
                 
                 // Update doughnut & region counts
-                this.regionCounts[randRegion]++;
+                this.regionCounts[selectedRegion]++;
                 
                 // Update the region Task progress bar visually
-                const barSuffix = randRegion.replace('region_', '');
+                const barSuffix = selectedRegion.replace('region_', '');
                 const bar = document.getElementById('bar-work-' + barSuffix);
                 if (bar) {
                     // Fill up to 100% based on ~150 tasks per region max
-                    let pct = Math.min(100, (this.regionCounts[randRegion] / 150) * 100);
+                    let pct = Math.min(100, (this.regionCounts[selectedRegion] / 150) * 100);
                     bar.style.width = pct + '%';
                 }
             }
