@@ -23,33 +23,33 @@ The engine is structured to isolate data generation, scheduling logic, resource 
 
 ```mermaid
 flowchart TD
-    A[Workload Sources\nReal Traces & Synthetic] --> B(Workload Generator)
-    B --> C{CarbonGrid DAA Engine\nScheduling Event}
+    A["Workload Sources<br>Real Traces & Synthetic"] --> B("Workload Generator")
+    B --> C{"CarbonGrid DAA Engine<br>Scheduling Event"}
     
     subgraph Data Inputs
         A
-        D[Historical Carbon Data] --> E(Prediction Layer)
-        E --> F[Carbon & Cost Engine\nIntensity & Cost]
+        D["Historical Carbon Data"] --> E("Prediction Layer")
+        E --> F["Carbon & Cost Engine<br>Intensity & Cost"]
     end
     
     subgraph Cloud Infrastructure
-        G[Cloud State Model\nRegions & Nodes]
+        G["Cloud State Model<br>Regions & Nodes"]
     end
     
     F --> C
     G --> C
     
-    C -->|Urgent Tasks| H[Fast Path\nGreedy + Min Heap]
-    C -->|Flexible Tasks| I[Batch Path\nGraph + MCMF + Dijkstra]
+    C -->|Urgent Tasks| H["Fast Path<br>Greedy + Min Heap"]
+    C -->|Flexible Tasks| I["Batch Path<br>Graph + MCMF + Dijkstra"]
     
-    H --> J[Resource Allocation\nSelect Best Node]
+    H --> J["Resource Allocation<br>Select Best Node"]
     I --> J
     
-    J --> K[Execution & State\nQueued -> Running -> Completed]
+    J --> K["Execution & State<br>Queued -> Running -> Completed"]
     K --> G
     
-    K --> L[Metrics Engine\nCarbon, Cost, Latency]
-    L --> M[Operator Dashboard\nLive Monitoring]
+    K --> L["Metrics Engine<br>Carbon, Cost, Latency"]
+    L --> M["Operator Dashboard<br>Live Monitoring"]
 ```
 
 ## Algorithm Flowchart (DAA Flow)
@@ -58,26 +58,26 @@ The Dynamic Allocation Algorithm (DAA) handles task scheduling based on urgency 
 
 ```mermaid
 flowchart TD
-    A([Task Arrives]) --> B[Read Task Parameters:\nCPU, RAM, Deadline]
-    B --> C[Filter Nodes]
-    C --> D{Feasible Nodes?}
-    D -- NO --> E[Wait Queue]
-    D -- YES --> F[Calculate Slack]
+    A(["Task Arrives"]) --> B["Read Task Parameters:<br>CPU, RAM, Deadline"]
+    B --> C["Filter Nodes"]
+    C --> D{"Feasible Nodes?"}
+    D -- NO --> E["Wait Queue"]
+    D -- YES --> F["Calculate Slack"]
     
-    F --> G{Urgent Task?}
+    F --> G{"Urgent Task?"}
     
-    G -- YES --> H[FAST PATH\nGreedy + Min Heap]
+    G -- YES --> H["FAST PATH<br>Greedy + Min Heap"]
     
-    G -- NO --> I[BATCH PATH\nBuild Graph]
-    I --> J[Min-Cost Max-Flow\n(MCMF)]
-    J --> K[Dijkstra Shortest Path]
+    G -- NO --> I["BATCH PATH<br>Build Graph"]
+    I --> J["Min-Cost Max-Flow<br>(MCMF)"]
+    J --> K["Dijkstra Shortest Path"]
     
-    H --> L[Select Resource\nRegion + Node + Slot]
+    H --> L["Select Resource<br>Region + Node + Slot"]
     K --> L
     
-    L --> M[Update State]
-    M --> N[Execute Task]
-    N --> O([Calculate Metrics])
+    L --> M["Update State"]
+    M --> N["Execute Task"]
+    N --> O(["Calculate Metrics"])
 ```
 
 ## Build Instructions
