@@ -4,7 +4,7 @@ namespace carbongrid {
 
 std::vector<Node*> FeasibilityFilter::filter(const Task& task, std::vector<Node*>& all_nodes) {
     std::vector<Node*> feasible_nodes;
-    // O(N) linear scan over all nodes
+
     for (Node* node : all_nodes) {
         if (node != nullptr && is_feasible(task, *node, 0.0)) { // Assuming current_time handling is done elsewhere or passed if needed, wait, signature mismatch if we don't pass current_time. We'll pass 0.0 or we should change the signature to take current_time.
             // Wait, the requirement says: is_feasible(task, node, current_time)
