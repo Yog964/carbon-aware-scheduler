@@ -56,6 +56,10 @@ public:
     std::vector<MetricsSnapshot> get_history() const;
     void take_snapshot(double timestamp, const CloudState& cloud_state);
     
+    // Export
+    void export_to_json(const std::string& filepath) const;
+    void export_to_csv(const std::string& filepath) const;
+    
     // Reset
     void reset();
     

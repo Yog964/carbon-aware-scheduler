@@ -232,6 +232,11 @@ int main(int argc, char* argv[]) {
     Logger::get_instance().log(LogLevel::INFO, "Throughput:          " + std::to_string(metrics.throughput(sim_clock.now())) + " tasks/sec");
     Logger::get_instance().log(LogLevel::INFO, "=========================================");
 
+    // Export metrics to file for benchmarking
+    metrics.export_to_json("simulation_results.json");
+    metrics.export_to_csv("simulation_results.csv");
+    Logger::get_instance().log(LogLevel::INFO, "Metrics exported to simulation_results.json and simulation_results.csv");
+
     // Cleanup heap-allocated tasks
     for (Task* t : all_tasks) {
         delete t;

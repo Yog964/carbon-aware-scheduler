@@ -1,4 +1,6 @@
 #include "metrics_engine.h"
+#include <fstream>
+#include "../utils/json_writer.h"
 
 namespace carbongrid {
 
@@ -132,6 +134,41 @@ std::vector<MetricsSnapshot> MetricsEngine::get_history() const {
 
 void MetricsEngine::take_snapshot(double timestamp, const CloudState& cloud_state) {
     history_.push_back(snapshot(timestamp, cloud_state));
+}
+
+void MetricsEngine::export_to_json(const std::string& filepath) const {
+    JsonObject json;
+    json.set("total_scheduling_events", scheduling_events_);
+    json.set("total_scheduled", scheduled_count_);
+    json.set("total_completed", completed_count_);
+    json.set("total_failed", failed_count_);
+    json.set("deadline_violations", deadline_violations_);
+    json.set("avg_scheduling_time_ms", avg_scheduling_time_ms());
+    json.set("carbon_reduction_pct", carbon_reduction_pct());
+    json.set("cost_reduction_pct", cost_reduction_pct());
+    json.set("carbongrid_carbon", total_carbon_);
+    json.set("baseline_carbon", baseline_carbon_);
+    json.set("carbongrid_cost", total_cost_);
+    json.set("baseline_cost", baseline_cost_);
+
+    std::ofstream out(filepath);
+    if (out.is_open()) {
+        out << json.to_string();
+        out.close();
+    }
+}
+
+void MetricsEngine::export_to_csv(const std::string& filepath) const {
+    std::ofstream out(filepath);
+    if (out.is_open()) {
+        out << "total_events,total_scheduled,total_completed,failed,deadline_violations,"
+            << "avg_sched_time_ms,carbon_reduction_pct,cost_reduction_pct,baseline_carbon,carbongrid_carbon,baseline_cost,carbongrid_cost\n";
+        out << scheduling_events_ << "," << scheduled_count_ << "," << completed_count_ << ","
+            << failed_count_ << "," << deadline_violations_ << "," << avg_scheduling_time_ms() << ","
+            << carbon_reduction_pct() << "," << cost_reduction_pct() << "," << baseline_carbon_ << ","
+            << total_carbon_ << "," << baseline_cost_ << "," << total_cost_ << "\n";
+        out.close();
+    }
 }
 
 void MetricsEngine::reset() {
