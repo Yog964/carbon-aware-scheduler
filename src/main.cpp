@@ -3,7 +3,7 @@
 #include <vector>
 #include <chrono>
 #include <cstdlib>
-
+#include <thread>
 #include "models/task.h"
 #include "models/node.h"
 #include "models/region.h"
@@ -23,8 +23,9 @@
 #include "baseline/baseline_scheduler.h"
 #include "server/server.h"
 
-#ifdef WIN32
+#ifdef _WIN32
 #include <windows.h>
+#undef ERROR
 #endif
 
 using namespace carbongrid;
@@ -100,7 +101,7 @@ int main(int argc, char* argv[]) {
     try {
     while (tasks_generated < total_tasks_to_generate || execution_engine.running_count() > 0) {
         
-#ifdef WIN32
+#ifdef _WIN32
         if (delay_ms > 0) {
             Sleep(delay_ms); // Visual delay so the dashboard can animate live!
         }
