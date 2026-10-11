@@ -1,5 +1,3 @@
-What real-world problem are we solving?
-
 A high-performance C++ simulation engine for carbon-aware cloud resource scheduling. It utilizes advanced algorithmic techniques to dynamically schedule cloud workloads across multiple geographic regions based on real-time carbon intensity and electricity costs.
 
 ## Features
