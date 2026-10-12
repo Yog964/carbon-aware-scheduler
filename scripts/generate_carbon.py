@@ -2,9 +2,12 @@ import csv
 import math
 import os
 
-os.makedirs(r'd:\VIT\Project\CarbonAwareDaaAlgo\data\carbon', exist_ok=True)
+script_dir = os.path.dirname(os.path.abspath(__file__))
+output_dir = os.path.join(script_dir, '..', 'data', 'carbon')
+os.makedirs(output_dir, exist_ok=True)
 
-with open(r'd:\VIT\Project\CarbonAwareDaaAlgo\data\carbon\carbon_intensity.csv', 'w', newline='') as f:
+output_file = os.path.join(output_dir, 'carbon_intensity.csv')
+with open(output_file, 'w', newline='') as f:
     writer = csv.writer(f)
     writer.writerow(['timestamp', 'region_id', 'carbon_intensity_gco2kwh', 'renewable_pct', 'electricity_cost_usd_kwh'])
     
