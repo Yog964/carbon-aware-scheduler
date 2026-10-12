@@ -110,16 +110,16 @@ Visualizes the control flow of the massive infinite `while` loop running inside 
 ```mermaid
 flowchart TD
     Start([Start Simulation]) --> Init[Load Node & Carbon CSV Profiles]
-    Init --> Check{Tasks Generated<br>< Total Limit?}
+    Init --> Check{"Tasks Generated<br>&lt; Total Limit?"}
     
     Check -- Yes --> Time[Advance Simulation Clock]
     Time --> Update[ExecutionEngine checks for completed tasks]
-    Update --> CheckGen{Is it time to<br>generate a new task?}
+    Update --> CheckGen{"Is it time to<br>generate a new task?"}
     
     CheckGen -- Yes --> Gen[Generate Task]
     Gen --> Sched[DAA Engine Schedules Task]
     Sched --> Exec[Allocate Resources]
-    Exec --> Metric{Is it time for<br>Metrics Snapshot?}
+    Exec --> Metric{"Is it time for<br>Metrics Snapshot?"}
     
     CheckGen -- No --> Metric
     
@@ -138,12 +138,12 @@ Shows the logical grouping of internal software components and how they communic
 
 ```mermaid
 flowchart LR
-    subgraph Data Layer
-        Profiles[(node_profiles.csv)]
-        Carbon[(carbon_intensity.csv)]
+    subgraph Data_Layer ["Data Layer"]
+        Profiles[("node_profiles.csv")]
+        Carbon[("carbon_intensity.csv")]
     end
     
-    subgraph Core C++ Engines
+    subgraph Core_Engines ["Core C++ Engines"]
         CE[Carbon Engine Component]
         CS[Cloud State Component]
         DAA[DAA Scheduler Component]
@@ -157,8 +157,8 @@ flowchart LR
     CE --> DAA
     DAA --> Exec
     
-    subgraph Output Layer
-        JSON[(metrics.json)]
+    subgraph Output_Layer ["Output Layer"]
+        JSON[("metrics.json")]
     end
     
     Exec --> JSON
@@ -173,19 +173,19 @@ The high-level macro view showing how the Frontend Browser, Python Middleware, a
 flowchart TD
     User((User)) -->|Inputs Config & Clicks Start| Browser
     
-    subgraph Web Frontend
+    subgraph Web_Frontend ["Web Frontend"]
         Browser[Dashboard HTML / JS]
     end
     
-    subgraph Middleware Server
+    subgraph Middleware_Server ["Middleware Server"]
         PyServer[Python API Server : Port 8080]
     end
     
     Browser <-->|HTTP POST / GET| PyServer
     
-    subgraph Compiled Backend
-        Cpp[CarbonGrid.exe C++ Process]
-        MetricFile[(dashboard/data/metrics.json)]
+    subgraph Compiled_Backend ["Compiled Backend"]
+        Cpp["CarbonGrid.exe C++ Process"]
+        MetricFile[("dashboard/data/metrics.json")]
     end
     
     PyServer -->|subprocess.Popen| Cpp
@@ -200,15 +200,15 @@ Shows the physical lifecycle states of a simulated Cloud Server Node as tasks ar
 
 ```mermaid
 flowchart LR
-    Load[(CSV Parsed)] --> Init[Node Created in RAM]
+    Load[("CSV Parsed")] --> Init["Node Created in RAM"]
     
-    Init --> Idle[Idle State<br>0% CPU]
+    Init --> Idle["Idle State<br>0% CPU"]
     
-    Idle --> Active[Task Assigned<br>CPU > 0%]
-    Active --> Maxed[CPU Reaches 100%<br>Removed from Feasibility Pool]
+    Idle --> Active["Task Assigned<br>CPU &gt; 0%"]
+    Active --> Maxed["CPU Reaches 100%<br>Removed from Feasibility Pool"]
     
-    Maxed --> Active[Task Completes<br>CPU Usage Drops]
-    Active --> Idle[All Tasks Complete]
+    Maxed -->|"Task Completes<br>CPU Usage Drops"| Active
+    Active -->|"All Tasks Complete"| Idle
     
     Idle --> Del([Simulation Ends<br>Node Destroyed])
 ```
@@ -316,16 +316,16 @@ This diagram illustrates how scheduling and execution events trigger telemetry r
 
 ```mermaid
 flowchart LR
-    subgraph Execution Engine
-        Event1[Task State Changes<br>QUEUED -> RUNNING]
-        Event2[Task State Changes<br>RUNNING -> COMPLETED]
+    subgraph Execution_Engine ["Execution Engine"]
+        Event1["Task State Changes<br>QUEUED -&gt; RUNNING"]
+        Event2["Task State Changes<br>RUNNING -&gt; COMPLETED"]
     end
     
-    subgraph DAA Engine
-        Event3[Scheduling Decision Made]
+    subgraph DAA_Engine ["DAA Engine"]
+        Event3["Scheduling Decision Made"]
     end
     
-    subgraph Metrics Engine
+    subgraph Metrics_Engine ["Metrics Engine"]
         Rec1([record_task_scheduled])
         Rec2([record_carbongrid_carbon])
         Rec3([record_scheduling_time])
@@ -335,7 +335,7 @@ flowchart LR
         Event3 --> Rec3
         
         Snap([take_snapshot])
-        Mem[(In-Memory Metrics State)]
+        Mem[("In-Memory Metrics State")]
         
         Rec1 --> Mem
         Rec2 --> Mem
@@ -344,8 +344,8 @@ flowchart LR
         Snap --> Mem
     end
     
-    Snap --> Export[export_to_json / csv]
-    Export --> File[(metrics.json)]
+    Snap --> Export["export_to_json / csv"]
+    Export --> File[("metrics.json")]
 ```
 
 
@@ -357,25 +357,25 @@ This diagram and table break down the dual-path routing algorithm, showing how t
 
 ```mermaid
 flowchart TD
-    Start{Incoming Task Urgency}
+    Start{"Incoming Task Urgency"}
     
-    subgraph "Fast Path (Greedy)"
-        Urgent[Urgent Task / Tight Deadline] --> Greedy[Greedy + Min-Heap]
-        Greedy --> O1[O(1) Selection]
-        O1 --> HighSpd[High Speed, Local Optimum]
+    subgraph Fast_Path ["Fast Path (Greedy)"]
+        Urgent["Urgent Task / Tight Deadline"] --> Greedy["Greedy + Min-Heap"]
+        Greedy --> O1["O(1) Selection"]
+        O1 --> HighSpd["High Speed, Local Optimum"]
     end
     
-    subgraph "Batch Path (MCMF)"
-        Flexible[Flexible Task / Loose Deadline] --> Batch[Batch Window]
-        Batch --> Graph[Build Flow Network]
-        Graph --> Dijkstra[MCMF + Dijkstra]
-        Dijkstra --> GlobalOpt[Slower Speed, Global Optimum]
+    subgraph Batch_Path ["Batch Path (MCMF)"]
+        Flexible["Flexible Task / Loose Deadline"] --> Batch["Batch Window"]
+        Batch --> Graph["Build Flow Network"]
+        Graph --> Dijkstra["MCMF + Dijkstra"]
+        Dijkstra --> GlobalOpt["Slower Speed, Global Optimum"]
     end
     
     Start --> Urgent
     Start --> Flexible
     
-    HighSpd --> Exec[Execution Engine]
+    HighSpd --> Exec["Execution Engine"]
     GlobalOpt --> Exec
 ```
 
@@ -438,19 +438,19 @@ Shows the big picture: how the user and external data systems interact with Carb
 
 ```mermaid
 flowchart TD
-    User([Cloud Operator / User])
+    User(["Cloud Operator / User"])
     
-    subgraph CarbonGrid [CarbonGrid Cloud Scheduler]
+    subgraph CarbonGrid ["CarbonGrid Cloud Scheduler"]
         direction TB
-        System[Core Simulation System]
+        System["Core Simulation System"]
     end
     
-    Ext1[(Historical Workload Traces)]
-    Ext2[(Global Carbon Intensity Datasets)]
+    Ext1[("Historical Workload Traces")]
+    Ext2[("Global Carbon Intensity Datasets")]
     
-    User -->|Monitors & Configures| System
-    Ext1 -->|Provides Task Data to| System
-    Ext2 -->|Provides Grid Data to| System
+    User -->|"Monitors & Configures"| System
+    Ext1 -->|"Provides Task Data to"| System
+    Ext2 -->|"Provides Grid Data to"| System
 ```
 
 ## 2. Container Diagram (Level 2)
@@ -458,20 +458,20 @@ Zooms inside the system to show the major containers (Frontend, API, Core Engine
 
 ```mermaid
 flowchart TD
-    User([Cloud Operator])
+    User(["Cloud Operator"])
     
-    subgraph CarbonGrid System
-        UI[Web Dashboard<br>HTML / JavaScript / CSS]
-        API[Web API Server<br>Python 3]
-        Core[Core Simulation Engine<br>C++17]
-        MetricsDB[(Metrics File Store<br>JSON / CSV)]
+    subgraph CarbonGrid_System ["CarbonGrid System"]
+        UI["Web Dashboard<br>HTML / JavaScript / CSS"]
+        API["Web API Server<br>Python 3"]
+        Core["Core Simulation Engine<br>C++17"]
+        MetricsDB[("Metrics File Store<br>JSON / CSV")]
     end
     
-    User -->|Views and Interacts| UI
-    UI -->|Polls for Data (HTTP GET)| API
-    API -->|Spawns & Monitors Process| Core
-    Core -->|Writes Telemetry| MetricsDB
-    API -->|Reads Telemetry| MetricsDB
+    User -->|"Views and Interacts"| UI
+    UI -->|"Polls for Data (HTTP GET)"| API
+    API -->|"Spawns & Monitors Process"| Core
+    Core -->|"Writes Telemetry"| MetricsDB
+    API -->|"Reads Telemetry"| MetricsDB
 ```
 
 
@@ -483,20 +483,20 @@ This flowchart outlines the exact mathematical and logical steps taken by the sc
 
 ```mermaid
 flowchart TD
-    Start([Task Requires Scheduling])
+    Start(["Task Requires Scheduling"])
     
-    GetParams[Read Task CPU, RAM, and Deadline] --> CheckNodes{Check Physical Capacities}
-    CheckNodes -- Filtered --> Feasible[Generate List of Feasible Nodes]
+    GetParams["Read Task CPU, RAM, and Deadline"] --> CheckNodes{"Check Physical Capacities"}
+    CheckNodes -->|Filtered| Feasible["Generate List of Feasible Nodes"]
     
-    Feasible --> ReadCarbon[Fetch Real-time Carbon Intensity for each Node's Region]
-    ReadCarbon --> ReadCost[Fetch Real-time Electricity Cost for each Node's Region]
+    Feasible --> ReadCarbon["Fetch Real-time Carbon Intensity for each Node's Region"]
+    ReadCarbon --> ReadCost["Fetch Real-time Electricity Cost for each Node's Region"]
     
-    ReadCost --> ScoreCalc[Calculate Unified Score:<br>Alpha * Carbon + Beta * Cost]
+    ReadCost --> ScoreCalc["Calculate Unified Score:<br>Alpha * Carbon + Beta * Cost"]
     
-    ScoreCalc --> Rank[Rank Nodes in Min-Heap Data Structure]
-    Rank --> Pick[Pop Node with the Absolute Lowest Score]
+    ScoreCalc --> Rank["Rank Nodes in Min-Heap Data Structure"]
+    Rank --> Pick["Pop Node with the Absolute Lowest Score"]
     
-    Pick --> Output([Return Winning Node ID])
+    Pick --> Output(["Return Winning Node ID"])
 ```
 
 

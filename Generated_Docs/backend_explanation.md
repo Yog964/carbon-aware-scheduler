@@ -12,17 +12,17 @@ When you interact with the UI, you are triggering a chain reaction:
 sequenceDiagram
     participant UI as Web Dashboard
     participant Py as Python Server (server.py)
-    participant C++ as CarbonGrid.exe (C++)
+    participant CPP as CarbonGrid.exe (C++)
     participant JSON as metrics.json
     
     UI->>Py: POST /api/start (Tasks, Rate, Delay)
-    Py->>C++: Spawns Process: CarbonGrid.exe <tasks> <rate> <delay>
+    Py->>CPP: Spawns Process: CarbonGrid.exe [tasks] [rate] [delay]
     
     loop Simulation Loop
-        C++->>C++: 1. Generate Task
-        C++->>C++: 2. DAA Algorithm selects Node
-        C++->>C++: 3. Allocate & Execute Task
-        C++->>JSON: 4. Write current state to metrics.json
+        CPP->>CPP: 1. Generate Task
+        CPP->>CPP: 2. DAA Algorithm selects Node
+        CPP->>CPP: 3. Allocate & Execute Task
+        CPP->>JSON: 4. Write current state to metrics.json
     end
     
     loop Every 100ms
@@ -76,16 +76,16 @@ For the nodes that *can* handle the task, the scheduler looks at the task's urge
 
 ```mermaid
 flowchart TD
-    Task([New Task Generated]) --> Filter[Filter out full nodes]
-    Filter --> Urgency{Is Task Urgent?}
+    Task(["New Task Generated"]) --> Filter["Filter out full nodes"]
+    Filter --> Urgency{"Is Task Urgent?"}
     
-    Urgency -- YES (Tight Deadline) --> Fast[FAST PATH: Greedy Min-Heap]
-    Fast --> FastEval[Evaluates lowest instantaneous Carbon & Cost]
+    Urgency -->|"YES (Tight Deadline)"| Fast["FAST PATH: Greedy Min-Heap"]
+    Fast --> FastEval["Evaluates lowest instantaneous Carbon & Cost"]
     FastEval --> NodeSelect((Select Node))
     
-    Urgency -- NO (Flexible Deadline) --> Batch[BATCH PATH: Network Graph]
-    Batch --> MCMF[Min-Cost Max-Flow Algorithm]
-    MCMF --> Dijkstra[Dijkstra Shortest Path]
+    Urgency -->|"NO (Flexible Deadline)"| Batch["BATCH PATH: Network Graph"]
+    Batch --> MCMF["Min-Cost Max-Flow Algorithm"]
+    MCMF --> Dijkstra["Dijkstra Shortest Path"]
     Dijkstra --> NodeSelect
 ```
 
@@ -169,18 +169,18 @@ Used for Urgent tasks. It sacrifices global optimality for absolute speed ($O(N 
 
 ```mermaid
 flowchart TD
-    Start([Receive Urgent Task]) --> Init[Initialize empty Min-Heap]
-    Init --> Loop[For each Feasible Node in CloudState]
+    Start(["Receive Urgent Task"]) --> Init["Initialize empty Min-Heap"]
+    Init --> Loop["For each Feasible Node in CloudState"]
     
-    Loop --> Calc[Calculate Node's Instantaneous<br>Carbon & Cost Score]
-    Calc --> Push[Push Node + Score into Min-Heap]
-    Push --> Check{More Nodes?}
+    Loop --> Calc["Calculate Node's Instantaneous<br>Carbon & Cost Score"]
+    Calc --> Push["Push Node + Score into Min-Heap"]
+    Push --> Check{"More Nodes?"}
     
-    Check -- Yes --> Loop
-    Check -- No --> Pop[Pop Top Node from Min-Heap<br>Extremely Fast O(1) Time]
+    Check -->|Yes| Loop
+    Check -->|No| Pop["Pop Top Node from Min-Heap<br>Extremely Fast O(1) Time"]
     
-    Pop --> Assign[Assign Task to Top Node]
-    Assign --> End([Task Scheduled Successfully])
+    Pop --> Assign["Assign Task to Top Node"]
+    Assign --> End(["Task Scheduled Successfully"])
 ```
 
 ### 2. The Batch Path: Min-Cost Max-Flow Algorithm (`MCMFScheduler.cpp`)
@@ -188,20 +188,20 @@ Used for Flexible tasks. It builds a massive graph to find the mathematically pe
 
 ```mermaid
 flowchart TD
-    Start([Receive Batch of Flexible Tasks]) --> Build[Initialize Empty Flow Network Graph]
+    Start(["Receive Batch of Flexible Tasks"]) --> Build["Initialize Empty Flow Network Graph"]
     
-    Build --> AddSrc[Add 'Source' Vertex connected to all Task Vertices]
-    AddSrc --> AddEdges[Add Edges from Tasks to Node-TimeSlots<br>Edge Weight = Predicted Carbon Score]
-    AddEdges --> AddSink[Add Edges from Node-TimeSlots to 'Sink' Vertex<br>Edge Capacity = Node CPU Available]
+    Build --> AddSrc["Add 'Source' Vertex connected to all Task Vertices"]
+    AddSrc --> AddEdges["Add Edges from Tasks to Node-TimeSlots<br>Edge Weight = Predicted Carbon Score"]
+    AddEdges --> AddSink["Add Edges from Node-TimeSlots to 'Sink' Vertex<br>Edge Capacity = Node CPU Available"]
     
-    AddSink --> MCMFLoop[Run Dijkstra's Shortest Path<br>using Johnson's Potentials]
+    AddSink --> MCMFLoop["Run Dijkstra's Shortest Path<br>using Johnson's Potentials"]
     
-    MCMFLoop --> PathFound{Shortest Path<br>to Sink Found?}
+    MCMFLoop --> PathFound{"Shortest Path<br>to Sink Found?"}
     
-    PathFound -- Yes --> Augment[Push 'Flow' (Task) along Shortest Path]
-    Augment --> Update[Update Residual Graph Capacities]
+    PathFound -->|Yes| Augment["Push 'Flow' (Task) along Shortest Path"]
+    Augment --> Update["Update Residual Graph Capacities"]
     Update --> MCMFLoop
     
-    PathFound -- No (All Tasks Assigned) --> Extract[Extract Final Assignments from Graph Flow]
-    Extract --> End([Return Batch Scheduling Decisions])
+    PathFound -->|"No (All Tasks Assigned)"| Extract["Extract Final Assignments from Graph Flow"]
+    Extract --> End(["Return Batch Scheduling Decisions"])
 ```

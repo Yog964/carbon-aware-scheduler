@@ -37,15 +37,15 @@ It is basically an array of "Vertices", where each Vertex points to a linked-lis
 
 ```mermaid
 flowchart LR
-    subgraph Adjacency List Array
+    subgraph Adjacency_List ["Adjacency List Array"]
         direction LR
-        V0[<b>Vertex 0</b><br>Source] --> E0[Edge to Task 1] --> E1[Edge to Task 2] --> E_N1[...]
+        V0["<b>Vertex 0</b><br>Source"] --> E0["Edge to Task 1"] --> E1["Edge to Task 2"] --> E_N1["..."]
         
-        V1[<b>Vertex 1</b><br>Task 1] --> E2[Edge to EU-Node Slot 1] --> E3[Edge to US-Node Slot 1] --> E_N2[...]
+        V1["<b>Vertex 1</b><br>Task 1"] --> E2["Edge to EU-Node Slot 1"] --> E3["Edge to US-Node Slot 1"] --> E_N2["..."]
         
-        V2[<b>Vertex 2</b><br>EU-Node Slot 1] --> E4[Edge to Sink]
+        V2["<b>Vertex 2</b><br>EU-Node Slot 1"] --> E4["Edge to Sink"]
         
-        V3[<b>Vertex N</b><br>Sink] --> Null[<i>No outgoing edges</i>]
+        V3["<b>Vertex N</b><br>Sink"] --> Null["<i>No outgoing edges</i>"]
     end
     
     classDef vertex fill:#1e1e2f,stroke:#7c3aed,stroke-width:2px;
@@ -64,13 +64,13 @@ When the simulation has millions of tasks, it needs a way to instantly find a sp
 
 ```mermaid
 flowchart LR
-    Input(["Search: 'task_2'"]) --> Hash[<b>Hash Function</b><br><i>Converts string to Integer</i>]
-    Hash --> |Index 1| Array
+    Input(["Search: 'task_2'"]) --> Hash["<b>Hash Function</b><br><i>Converts string to Integer</i>"]
+    Hash --> |"Index 1"| Array
     
-    subgraph Memory Array: all_tasks_
-        Slot0["<b>Index 0</b><br>'task_1' -> Memory: 0x1A4B<br>[COMPLETED]"]
-        Slot1["<b>Index 1</b><br>'task_2' -> Memory: 0x2F8C<br>[RUNNING]"]
-        Slot2["<b>Index 2</b><br>'task_3' -> Memory: 0x9D2E<br>[QUEUED]"]
+    subgraph Memory_Array ["Memory Array: all_tasks_"]
+        Slot0["<b>Index 0</b><br>'task_1' -&gt; Memory: 0x1A4B<br>[COMPLETED]"]
+        Slot1["<b>Index 1</b><br>'task_2' -&gt; Memory: 0x2F8C<br>[RUNNING]"]
+        Slot2["<b>Index 2</b><br>'task_3' -&gt; Memory: 0x9D2E<br>[QUEUED]"]
     end
     
     classDef highlight fill:#4c1d95,stroke:#a78bfa,stroke-width:3px,color:#fff;
@@ -88,14 +88,13 @@ The standard `std::vector` is used to hold dynamic lists of items (like the list
 ```mermaid
 classDiagram
     class Vector_Memory_Expansion {
-        Size: 3 elements
-        Capacity: 4 slots
+        +Size: 3 elements
+        +Capacity: 4 slots
+        +Slot_0: Task 1
+        +Slot_1: Task 2
+        +Slot_2: Task 3
+        +Slot_3: Empty
     }
     
-    Vector_Memory_Expansion : [Task 1]
-    Vector_Memory_Expansion : [Task 2]
-    Vector_Memory_Expansion : [Task 3]
-    Vector_Memory_Expansion : [ Empty ]
-    
-    note for Vector_Memory_Expansion "If you add Task 4 and Task 5, \nthe Vector will allocate a new \nblock of 8 slots and move the data!"
+    note for Vector_Memory_Expansion "If you add Task 4 and Task 5,\nthe Vector will allocate a new\nblock of 8 slots and move the data!"
 ```
