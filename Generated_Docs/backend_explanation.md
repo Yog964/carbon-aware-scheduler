@@ -139,27 +139,6 @@ Once the algorithm spits out a winning node ID:
 
 ---
 
-## Visual Glossary
-
-To help visualize the internal mathematics and architecture of the `DAAEngine`, here are three diagrams representing the core concepts:
-
-### 1. The Global Routing Architecture
-This represents the high-level view of the **CarbonGrid Scheduler**. Incoming tasks are evaluated by the central engine and routed through global data streams to the geographic region (e.g., US-East, Europe, Asia) that currently has the greenest energy grid.
-
-![Global Routing Architecture](./images/global_routing_architecture_1791624833268.jpg)
-
-### 2. The Fast Path (Greedy Min-Heap)
-When a task is marked as **Urgent**, it goes through this Min-Heap priority queue. Every feasible server is scored based on carbon intensity and cost. The heap instantly bubbles the server with the lowest score to the top, allowing `GreedyScheduler.cpp` to pluck it out in `O(1)` time.
-
-![Min-Heap Priority Queue](./images/greedy_min_heap_1791624805742.jpg)
-
-### 3. The Batch Path (MCMF Flow Network)
-When tasks are **Flexible**, they are batched together. `MCMFScheduler.cpp` builds a mathematical flow graph like the one below. The sources on the left are tasks, and the sinks on the right are cloud servers across different future time slots. Dijkstra's algorithm finds the path of least resistance (lowest carbon) through this network.
-
-![MCMF Flow Network](./images/mcmf_flow_network_1791624819230.jpg)
-
----
-
 ## Mermaid Algorithm Flowcharts
 
 Here are the detailed, step-by-step logic flows for the two specific C++ scheduling algorithms inside the engine.
